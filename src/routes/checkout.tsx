@@ -7,6 +7,9 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import type { CheckoutFormData, OrderSummary } from "@/types";
 
+const TAX_RATE = 0.1; // 10% tax
+const SHIPPING_COST = 10.0;
+
 export const Route = createFileRoute("/checkout")({
 	component: CheckoutPage,
 });
@@ -26,8 +29,8 @@ function CheckoutPage() {
 	});
 
 	const subtotal = getTotalPrice();
-	const tax = subtotal * 0.1; // 10% tax
-	const shipping = 10.0;
+	const tax = subtotal * TAX_RATE;
+	const shipping = SHIPPING_COST;
 	const grandTotal = subtotal + tax + shipping;
 
 	const orderSummary: OrderSummary = {
@@ -149,6 +152,8 @@ function CheckoutPage() {
 										name="zipCode"
 										value={formData.zipCode}
 										onChange={handleInputChange}
+										pattern="[0-9]{5}"
+										placeholder="12345"
 										required
 									/>
 								</div>
@@ -164,9 +169,12 @@ function CheckoutPage() {
 								</label>
 								<Input
 									name="cardNumber"
+									type="text"
 									value={formData.cardNumber}
 									onChange={handleInputChange}
 									placeholder="1234 5678 9012 3456"
+									pattern="[0-9]{13,19}"
+									maxLength={19}
 									required
 								/>
 							</div>
