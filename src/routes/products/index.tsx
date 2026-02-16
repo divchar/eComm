@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { getProducts } from "@/lib/directus";
 import type { Product } from "@/types";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export const Route = createFileRoute("/products")({
+export const Route = createFileRoute("/products/")({
 	component: ProductsPage,
 });
 
@@ -21,7 +21,7 @@ function ProductsPage() {
 		getProducts().then((data) => {
 			setProducts(data as Product[]);
 			setLoading(false);
-		});
+		})
 	}, []);
 
 	if (loading) {
@@ -32,7 +32,7 @@ function ProductsPage() {
 		const quantity = quantities[product.id] || 1;
 		addToCart(product, quantity);
 		setQuantities({ ...quantities, [product.id]: 1 });
-	};
+	}
 
 	return (
 		<div className="container mx-auto p-8">
@@ -48,31 +48,38 @@ function ProductsPage() {
 							</p>
 							<p className="text-2xl font-bold mb-4">${product.price}</p>
 
-							<div className="flex gap-2">
-								<Input
-									type="number"
-									min="1"
-									placeholder="Qty"
-									value={quantities[product.id] || 1}
-									onChange={(e) =>
-										setQuantities({
-											...quantities,
-											[product.id]: parseInt(e.target.value) || 1,
-										})
-									}
-									className="w-20"
-								/>
-								<Button
-									className="flex-1"
-									onClick={() => handleAddToCart(product)}
-								>
-									Add to Cart
-								</Button>
+							<div className="flex flex-col gap-2">
+								<Link to="/products/$productId" params={{ productId: product.id }}>
+									<Button variant="outline" className="w-full">
+										View Details
+									</Button>
+								</Link>
+								<div className="flex gap-2">
+									<Input
+										type="number"
+										min="1"
+										placeholder="Qty"
+										value={quantities[product.id] || 1}
+										onChange={(e) =>
+											setQuantities({
+												...quantities,
+												[product.id]: parseInt(e.target.value) || 1,
+											})
+										}
+										className="w-20"
+									/>
+									<Button
+										className="flex-1"
+										onClick={() => handleAddToCart(product)}
+									>
+										Add to Cart
+									</Button>
+								</div>
 							</div>
 						</div>
 					</Card>
 				))}
 			</div>
 		</div>
-	);
+	)
 }
