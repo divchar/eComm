@@ -32,7 +32,8 @@ interface FormErrors {
 }
 
 function CheckoutPage() {
-	const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCart();
+	const { cart, removeFromCart, updateQuantity, getTotalPrice, clearCart } =
+		useCart();
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState<FormData>({
 		firstName: "",
@@ -113,10 +114,8 @@ function CheckoutPage() {
 		e.preventDefault();
 
 		if (validateForm()) {
-			// Clear cart by removing all items
-			cart.items.forEach((item) => {
-				removeFromCart(item.product.id);
-			});
+			// Clear the cart
+			clearCart();
 			// Redirect to products page
 			navigate({ to: "/products" });
 		}
@@ -126,54 +125,55 @@ function CheckoutPage() {
 		<div className="container mx-auto p-8">
 			<h1 className="text-4xl font-bold mb-8">Checkout</h1>
 
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-				{/* Left column - Cart items and form */}
-				<div className="lg:col-span-2 space-y-6">
-					{/* Cart Items */}
-					<Card className="p-6">
-						<h2 className="text-2xl font-bold mb-4">Cart Items</h2>
-						<div className="space-y-4">
-							{cart.items.map((item) => (
-								<div
-									key={item.product.id}
-									className="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0"
-								>
-									<div className="flex-1">
-										<h3 className="font-bold">{item.product.name}</h3>
-										<p className="text-sm text-muted-foreground">
-											${item.product.price.toFixed(2)} each
-										</p>
+			<form onSubmit={handlePlaceOrder}>
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+					{/* Left column - Cart items and form */}
+					<div className="lg:col-span-2 space-y-6">
+						{/* Cart Items */}
+						<Card className="p-6">
+							<h2 className="text-2xl font-bold mb-4">Cart Items</h2>
+							<div className="space-y-4">
+								{cart.items.map((item) => (
+									<div
+										key={item.product.id}
+										className="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0"
+									>
+										<div className="flex-1">
+											<h3 className="font-bold">{item.product.name}</h3>
+											<p className="text-sm text-muted-foreground">
+												${item.product.price.toFixed(2)} each
+											</p>
+										</div>
+										<div className="flex items-center gap-2">
+											<Input
+												type="number"
+												min="1"
+												value={item.quantity}
+												onChange={(e) =>
+													updateQuantity(item.product.id, parseInt(e.target.value))
+												}
+												className="w-20"
+											/>
+											<p className="font-bold w-24 text-right">
+												${(item.product.price * item.quantity).toFixed(2)}
+											</p>
+											<Button
+												type="button"
+												variant="destructive"
+												size="default"
+												onClick={() => removeFromCart(item.product.id)}
+											>
+												Remove
+											</Button>
+										</div>
 									</div>
-									<div className="flex items-center gap-2">
-										<Input
-											type="number"
-											min="1"
-											value={item.quantity}
-											onChange={(e) =>
-												updateQuantity(item.product.id, parseInt(e.target.value))
-											}
-											className="w-20"
-										/>
-										<p className="font-bold w-24 text-right">
-											${(item.product.price * item.quantity).toFixed(2)}
-										</p>
-										<Button
-											variant="destructive"
-											size="default"
-											onClick={() => removeFromCart(item.product.id)}
-										>
-											Remove
-										</Button>
-									</div>
-								</div>
-							))}
-						</div>
-					</Card>
+								))}
+							</div>
+						</Card>
 
-					{/* Shipping & Billing Form */}
-					<Card className="p-6">
-						<h2 className="text-2xl font-bold mb-4">Shipping & Billing</h2>
-						<form onSubmit={handlePlaceOrder}>
+						{/* Shipping & Billing Form */}
+						<Card className="p-6">
+							<h2 className="text-2xl font-bold mb-4">Shipping & Billing</h2>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div>
 									<label className="block text-sm font-medium mb-1">
@@ -287,13 +287,12 @@ function CheckoutPage() {
 									)}
 								</div>
 							</div>
-						</form>
-					</Card>
+						</Card>
 
-					{/* Payment Section */}
-					<Card className="p-6">
-						<h2 className="text-2xl font-bold mb-4">Payment</h2>
-						<div>
+						{/* Payment Section */}
+						<Card className="p-6">
+							<h2 className="text-2xl font-bold mb-4">Payment</h2>
+							<div>
 							<label className="block text-sm font-medium mb-1">
 								Card Number *
 							</label>
@@ -346,22 +345,19 @@ function CheckoutPage() {
 							</div>
 						</div>
 
-						<Button
-							className="w-full mb-4"
-							size="lg"
-							onClick={handlePlaceOrder}
-						>
+						<Button type="submit" className="w-full mb-4" size="lg">
 							Place Order
 						</Button>
 
 						<Link to="/products">
-							<Button variant="outline" className="w-full">
+							<Button type="button" variant="outline" className="w-full">
 								Back to Shopping
 							</Button>
 						</Link>
 					</Card>
 				</div>
 			</div>
+			</form>
 		</div>
 	);
 }
