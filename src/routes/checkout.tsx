@@ -50,6 +50,7 @@ function CheckoutPage() {
 		if (!formData.email.trim()) {
 			newErrors.email = "Email is required";
 		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+			// Basic email validation - for production, use a more robust pattern or validation library
 			newErrors.email = "Email is invalid";
 		}
 		if (!formData.address.trim()) {
@@ -70,6 +71,8 @@ function CheckoutPage() {
 		if (!formData.cardNumber.trim()) {
 			newErrors.cardNumber = "Card number is required";
 		} else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ""))) {
+			// Basic validation for 16-digit card numbers
+			// For production: implement Luhn algorithm and use a payment processor's validation
 			newErrors.cardNumber = "Card number must be 16 digits";
 		}
 
@@ -89,7 +92,12 @@ function CheckoutPage() {
 		e.preventDefault();
 		
 		if (validateForm()) {
-			// In a real app, this would send the order to a backend
+			// NOTE: In a production application, sensitive payment data should:
+			// 1. Never be stored in client-side state
+			// 2. Be sent directly to a payment processor (Stripe, PayPal, etc.) using their SDK
+			// 3. Use tokenization to handle card data securely
+			// 4. Be transmitted over HTTPS with proper encryption
+			// This is a demonstration only and should not be used for real payment processing
 			alert(`Order placed successfully! Total: $${orderSummary.total.toFixed(2)}`);
 			navigate({ to: "/products" });
 		}
@@ -276,6 +284,8 @@ function CheckoutPage() {
 									<label htmlFor="cardNumber" className="block text-sm font-medium mb-1">
 										Card Number
 									</label>
+									{/* NOTE: For production, use a payment processor SDK (Stripe Elements, etc.)
+									    that provides secure card input components with built-in validation */}
 									<Input
 										id="cardNumber"
 										type="text"
