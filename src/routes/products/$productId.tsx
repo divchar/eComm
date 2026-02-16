@@ -19,10 +19,16 @@ function ProductDetailsPage() {
 	const { addToCart } = useCart();
 
 	useEffect(() => {
-		getProductById(productId).then((data) => {
-			setProduct(data);
-			setLoading(false);
-		});
+		getProductById(productId)
+			.then((data) => {
+				setProduct(data);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error("Failed to fetch product:", error);
+				setProduct(null);
+				setLoading(false);
+			});
 	}, [productId]);
 
 	if (loading) {

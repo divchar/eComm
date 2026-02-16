@@ -8,7 +8,7 @@ export async function getProducts(): Promise<Product[]> {
 	return items as Product[];
 }
 
-export async function getProductById(id: string): Promise<Product> {
+export async function getProductById(id: string): Promise<Product | null> {
 	const item = await directus.request(readItem("products", id));
-	return item as Product;
+	return item as Product | null;
 }

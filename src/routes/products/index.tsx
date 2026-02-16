@@ -18,10 +18,16 @@ function ProductsPage() {
 	const { addToCart } = useCart();
 
 	useEffect(() => {
-		getProducts().then((data) => {
-			setProducts(data as Product[]);
-			setLoading(false);
-		})
+		getProducts()
+			.then((data) => {
+				setProducts(data as Product[]);
+				setLoading(false);
+			})
+			.catch((error) => {
+				console.error("Failed to fetch products:", error);
+				setProducts([]);
+				setLoading(false);
+			});
 	}, []);
 
 	if (loading) {
