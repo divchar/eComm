@@ -56,7 +56,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 		if (existingItem) {
 			// Update existing item
 			cartCollection.update(product.id, (draft) => {
-				draft.quantity = draft.quantity + quantity;
+				draft.quantity += quantity;
 			});
 		} else {
 			// Insert new item
