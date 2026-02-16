@@ -101,9 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const requestPasswordReset = async (email: string) => {
 		try {
-			await directus.request(
-				passwordRequest(email, "http://localhost:3000/reset-password"),
-			);
+			const resetUrl = typeof window !== "undefined" 
+				? `${window.location.origin}/reset-password`
+				: "http://localhost:3000/reset-password";
+			await directus.request(passwordRequest(email, resetUrl));
 		} catch (error) {
 			console.error("Password reset request failed:", error);
 			throw error;

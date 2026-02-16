@@ -34,7 +34,7 @@ function LoginPage() {
 			return;
 		}
 
-		if (!email.includes("@")) {
+		if (!email.includes("@") || !email.includes(".") || email.indexOf("@") > email.lastIndexOf(".")) {
 			setError("Please enter a valid email address");
 			return;
 		}
