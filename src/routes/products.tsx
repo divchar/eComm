@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { getProducts } from "@/lib/directus";
+import { mockProducts } from "@/lib/mockProducts";
 import type { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
@@ -18,10 +19,16 @@ function ProductsPage() {
 	const { addToCart } = useCart();
 
 	useEffect(() => {
-		getProducts().then((data) => {
-			setProducts(data as Product[]);
-			setLoading(false);
-		});
+		getProducts()
+			.then((data) => {
+				setProducts(data as Product[]);
+				setLoading(false);
+			})
+			.catch(() => {
+				// Use mock data if Directus is not available
+				setProducts(mockProducts);
+				setLoading(false);
+			});
 	}, []);
 
 	if (loading) {
