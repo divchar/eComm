@@ -87,7 +87,7 @@ function ProductDetailsPage() {
 										min="1"
 										value={quantity}
 										onChange={(e) =>
-											setQuantity(parseInt(e.target.value) || 1)
+											setQuantity(parseInt(e.target.value, 10) || 1)
 										}
 										className="w-full"
 									/>

@@ -65,7 +65,7 @@ function ProductsPage() {
 										onChange={(e) =>
 											setQuantities({
 												...quantities,
-												[product.id]: parseInt(e.target.value) || 1,
+												[product.id]: parseInt(e.target.value, 10) || 1,
 											})
 										}
 										className="w-20"

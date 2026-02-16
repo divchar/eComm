@@ -16,10 +16,15 @@ function CheckoutPage() {
 	const handleCheckout = () => {
 		setIsProcessing(true);
 		// Simulate checkout process
-		setTimeout(() => {
-			clearCart();
-			navigate({ to: "/products" });
-		}, 1000);
+		try {
+			setTimeout(() => {
+				clearCart();
+				navigate({ to: "/products" });
+			}, 1000);
+		} catch (error) {
+			console.error("Checkout failed:", error);
+			setIsProcessing(false);
+		}
 	};
 
 	if (cart.items.length === 0) {
