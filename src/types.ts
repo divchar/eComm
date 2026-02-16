@@ -13,3 +13,16 @@ export interface CartItem {
 export interface Cart {
 	items: CartItem[];
 }
+
+export interface CheckoutFormData {
+	customerName: string;
+	email: string;
+	shippingAddress: string;
+}
+
+export interface OrderSummary {
+	subtotal: number;
+	tax: number;
+	shipping: number;
+	total: number;
+}

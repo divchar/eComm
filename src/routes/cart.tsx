@@ -42,7 +42,7 @@ function CartPage() {
 								min="1"
 								value={item.quantity}
 								onChange={(e) =>
-									updateQuantity(item.product.id, parseInt(e.target.value))
+									updateQuantity(item.product.id, parseInt(e.target.value, 10))
 								}
 								className="w-20"
 							/>
@@ -65,9 +65,11 @@ function CartPage() {
 					<p className="text-2xl font-bold">Total:</p>
 					<p className="text-3xl font-bold">${getTotalPrice().toFixed(2)}</p>
 				</div>
-				<Button className="w-full mb-4" size="lg">
-					Checkout
-				</Button>
+				<Link to="/checkout">
+					<Button className="w-full mb-4" size="lg">
+						Checkout
+					</Button>
+				</Link>
 				<Link to="/products">
 					<Button variant="outline" className="w-full">
 						Continue Shopping
