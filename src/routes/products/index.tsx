@@ -88,5 +88,5 @@ function ProductsPage() {
 				))}
 			</div>
 		</div>
-	)
+	);
 }

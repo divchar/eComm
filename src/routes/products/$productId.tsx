@@ -89,5 +89,5 @@ function ProductDetailsPage() {
 				</div>
 			</Card>
 		</div>
-	)
+	);
 }
