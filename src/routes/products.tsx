@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { getProducts } from "@/lib/directus";
 import type { Product } from "@/types";
@@ -42,7 +42,11 @@ function ProductsPage() {
 				{products.map((product) => (
 					<Card key={product.id} className="overflow-hidden flex flex-col">
 						<div className="p-6 flex-1 flex flex-col">
-							<h2 className="text-xl font-bold mb-2">{product.name}</h2>
+							<Link to="/products/$productId" params={{ productId: product.id }}>
+								<h2 className="text-xl font-bold mb-2 hover:text-blue-600 cursor-pointer">
+									{product.name}
+								</h2>
+							</Link>
 							<p className="text-sm text-muted-foreground mb-4 flex-1">
 								{product.description}
 							</p>
