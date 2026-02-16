@@ -1,5 +1,15 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import type { Cart, Product } from "@/types";
+import {
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+	type ReactNode,
+} from "react";
+import {
+	createCollection,
+	localStorageCollectionOptions,
+} from "@tanstack/react-db";
+import type { Cart, CartItem, Product } from "@/types";
 
 interface CartContextType {
 	cart: Cart;
@@ -12,35 +22,50 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Create the TanStack DB collection for cart items
+const cartCollection = createCollection(
+	localStorageCollectionOptions<CartItem>({
+		id: "ecomm-cart",
+		storageKey: "ecomm-cart",
+		getKey: (item) => item.product.id,
+	}),
+);
+
 export function CartProvider({ children }: { children: ReactNode }) {
+	// Use useState to hold cart state
 	const [cart, setCart] = useState<Cart>({ items: [] });
 
-	const addToCart = (product: Product, quantity: number) => {
-		setCart((prevCart) => {
-			const existingItem = prevCart.items.find(
-				(item) => item.product.id === product.id,
-			);
+	// Load cart from collection on mount and subscribe to changes
+	useEffect(() => {
+		// Load initial data from collection
+		const items = Array.from(cartCollection.state.values());
+		setCart({ items });
 
-			if (existingItem) {
-				return {
-					items: prevCart.items.map((item) =>
-						item.product.id === product.id
-							? { ...item, quantity: item.quantity + quantity }
-							: item,
-					),
-				};
-			} else {
-				return {
-					items: [...prevCart.items, { product, quantity }],
-				};
-			}
+		// Subscribe to changes
+		const unsubscribe = cartCollection.subscribeChanges(() => {
+			const updatedItems = Array.from(cartCollection.state.values());
+			setCart({ items: updatedItems });
 		});
+
+		return unsubscribe;
+	}, []);
+
+	const addToCart = (product: Product, quantity: number) => {
+		const existingItem = cartCollection.state.get(product.id);
+
+		if (existingItem) {
+			// Update existing item
+			cartCollection.update(product.id, (draft) => {
+				draft.quantity += quantity;
+			});
+		} else {
+			// Insert new item
+			cartCollection.insert({ product, quantity });
+		}
 	};
 
 	const removeFromCart = (productId: string) => {
-		setCart((prevCart) => ({
-			items: prevCart.items.filter((item) => item.product.id !== productId),
-		}));
+		cartCollection.delete(productId);
 	};
 
 	const updateQuantity = (productId: string, quantity: number) => {
@@ -49,11 +74,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
-		setCart((prevCart) => ({
-			items: prevCart.items.map((item) =>
-				item.product.id === productId ? { ...item, quantity } : item,
-			),
-		}));
+		cartCollection.update(productId, (draft) => {
+			draft.quantity = quantity;
+		});
 	};
 
 	const getTotalPrice = () => {
@@ -64,7 +87,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 	};
 
 	const clearCart = () => {
-		setCart({ items: [] });
+		// Delete all items from the collection
+		const itemIds = Array.from(cartCollection.state.keys());
+		for (const id of itemIds) {
+			cartCollection.delete(id);
+		}
 	};
 
 	return (
