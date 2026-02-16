@@ -8,6 +8,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "../styles.css?url";
 import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { Header } from "@/components/Header";
 
 export const Route = createRootRoute({
@@ -37,11 +38,13 @@ export const Route = createRootRoute({
 function RootComponent() {
 	return (
 		<RootDocument>
-			<CartProvider>
-				<Header />
-				{/* All your route components render inside <Outlet /> */}
-				<Outlet />
-			</CartProvider>
+			<AuthProvider>
+				<CartProvider>
+					<Header />
+					{/* All your route components render inside <Outlet /> */}
+					<Outlet />
+				</CartProvider>
+			</AuthProvider>
 		</RootDocument>
 	);
 }

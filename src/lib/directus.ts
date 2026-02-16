@@ -1,7 +1,9 @@
-import { createDirectus, readItems, readItem, rest } from "@directus/sdk";
+import { createDirectus, readItems, readItem, rest, authentication } from "@directus/sdk";
 import type { Product } from "@/types";
 
-export const directus = createDirectus("http://localhost:8055").with(rest());
+export const directus = createDirectus("http://localhost:8055")
+	.with(rest())
+	.with(authentication("json"));
 
 export async function getProducts(): Promise<Product[]> {
 	const items = await directus.request(readItems("products"));
