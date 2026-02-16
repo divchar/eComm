@@ -17,7 +17,8 @@ export async function getProductById(id: string): Promise<Product | null> {
 		const product = item as Product;
 		const parsedPrice = typeof product.price === "string" ? parseFloat(product.price) : product.price;
 		return { ...product, price: isNaN(parsedPrice) ? 0 : parsedPrice };
-	} catch {
+	} catch (error) {
+		console.error("Failed to fetch product:", error);
 		return null;
 	}
 }
