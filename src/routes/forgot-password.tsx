@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ function ForgotPasswordPage() {
 	const [success, setSuccess] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const handleSubmit = async (e: FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError("");
 		setSuccess(false);
