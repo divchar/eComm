@@ -1,8 +1,8 @@
 import {
 	createContext,
 	useContext,
-	useMemo,
-	useSyncExternalStore,
+	useState,
+	useEffect,
 	type ReactNode,
 } from "react";
 import {
@@ -32,17 +32,23 @@ const cartCollection = createCollection(
 );
 
 export function CartProvider({ children }: { children: ReactNode }) {
-	// Subscribe to collection changes to trigger re-renders
-	const cartItems = useSyncExternalStore(
-		(callback) => {
-			const unsubscribe = cartCollection.subscribe(callback);
-			return unsubscribe;
-		},
-		() => Array.from(cartCollection.state.values()),
-	);
+	// Use useState to hold cart state
+	const [cart, setCart] = useState<Cart>({ items: [] });
 
-	// Create cart object from collection items
-	const cart = useMemo<Cart>(() => ({ items: cartItems }), [cartItems]);
+	// Load cart from collection on mount and subscribe to changes
+	useEffect(() => {
+		// Load initial data from collection
+		const items = Array.from(cartCollection.state.values());
+		setCart({ items });
+
+		// Subscribe to changes
+		const unsubscribe = cartCollection.subscribeChanges(() => {
+			const updatedItems = Array.from(cartCollection.state.values());
+			setCart({ items: updatedItems });
+		});
+
+		return unsubscribe;
+	}, []);
 
 	const addToCart = (product: Product, quantity: number) => {
 		const existingItem = cartCollection.state.get(product.id);
@@ -74,8 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 	};
 
 	const getTotalPrice = () => {
-		const items = Array.from(cartCollection.state.values());
-		return items.reduce(
+		return cart.items.reduce(
 			(total, item) => total + item.product.price * item.quantity,
 			0,
 		);
