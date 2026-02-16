@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { getProducts } from "@/lib/directus";
 import type { Product } from "@/types";
@@ -46,28 +46,37 @@ function ProductsPage() {
 							<p className="text-sm text-muted-foreground mb-4 flex-1">
 								{product.description}
 							</p>
-							<p className="text-2xl font-bold mb-4">${product.price}</p>
+							<p className="text-2xl font-bold mb-4">
+								${product.price.toFixed(2)}
+							</p>
 
-							<div className="flex gap-2">
-								<Input
-									type="number"
-									min="1"
-									placeholder="Qty"
-									value={quantities[product.id] || 1}
-									onChange={(e) =>
-										setQuantities({
-											...quantities,
-											[product.id]: parseInt(e.target.value) || 1,
-										})
-									}
-									className="w-20"
-								/>
-								<Button
-									className="flex-1"
-									onClick={() => handleAddToCart(product)}
-								>
-									Add to Cart
-								</Button>
+							<div className="space-y-2">
+								<Link to="/products/$productId" params={{ productId: product.id }}>
+									<Button variant="outline" className="w-full">
+										View Details
+									</Button>
+								</Link>
+								<div className="flex gap-2">
+									<Input
+										type="number"
+										min="1"
+										placeholder="Qty"
+										value={quantities[product.id] || 1}
+										onChange={(e) =>
+											setQuantities({
+												...quantities,
+												[product.id]: parseInt(e.target.value) || 1,
+											})
+										}
+										className="w-20"
+									/>
+									<Button
+										className="flex-1"
+										onClick={() => handleAddToCart(product)}
+									>
+										Add to Cart
+									</Button>
+								</div>
 							</div>
 						</div>
 					</Card>
