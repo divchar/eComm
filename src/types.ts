@@ -13,3 +13,21 @@ export interface CartItem {
 export interface Cart {
 	items: CartItem[];
 }
+
+export interface CheckoutFormData {
+	firstName: string;
+	lastName: string;
+	email: string;
+	address: string;
+	city: string;
+	state: string;
+	zipCode: string;
+	cardNumber: string;
+}
+
+export interface OrderSummary {
+	subtotal: number;
+	tax: number;
+	shipping: number;
+	grandTotal: number;
+}
