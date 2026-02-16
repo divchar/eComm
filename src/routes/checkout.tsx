@@ -64,6 +64,7 @@ function CheckoutPage() {
 		if (!formData.zip.trim()) {
 			newErrors.zip = "ZIP code is required";
 		} else if (!/^\d{5}(-\d{4})?$/.test(formData.zip)) {
+			// Note: This validates US ZIP code format only (12345 or 12345-6789)
 			newErrors.zip = "ZIP code is invalid";
 		}
 		if (!formData.cardNumber.trim()) {
@@ -282,12 +283,21 @@ function CheckoutPage() {
 										onChange={(e) => handleInputChange("cardNumber", e.target.value)}
 										className={errors.cardNumber ? "border-red-500" : ""}
 										placeholder="1234567890123456"
+										autoComplete="cc-number"
 									/>
 									{errors.cardNumber && (
 										<p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>
 									)}
 								</div>
 							</div>
+
+							<Button
+								type="submit"
+								className="w-full mt-6"
+								size="lg"
+							>
+								Place Order
+							</Button>
 						</Card>
 					</form>
 				</div>
@@ -335,17 +345,8 @@ function CheckoutPage() {
 								</div>
 							</div>
 
-							<Button
-								type="submit"
-								className="w-full mt-6"
-								size="lg"
-								onClick={handlePlaceOrder}
-							>
-								Place Order
-							</Button>
-
 							<Link to="/cart">
-								<Button variant="outline" className="w-full mt-4">
+								<Button variant="outline" className="w-full mt-6">
 									Back to Cart
 								</Button>
 							</Link>
