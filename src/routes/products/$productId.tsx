@@ -15,18 +15,28 @@ function ProductDetailsPage() {
 	const { productId } = Route.useParams();
 	const [product, setProduct] = useState<Product | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const [quantity, setQuantity] = useState(1);
 	const { addToCart } = useCart();
 
 	useEffect(() => {
-		getProduct(productId).then((data) => {
-			setProduct(data);
-			setLoading(false);
-		})
+		getProduct(productId)
+			.then((data) => {
+				setProduct(data);
+				setLoading(false);
+			})
+			.catch((err) => {
+				setError(err.message || "Failed to load product");
+				setLoading(false);
+			});
 	}, [productId]);
 
 	if (loading) {
 		return <div className="container mx-auto p-8">Loading...</div>;
+	}
+
+	if (error) {
+		return <div className="container mx-auto p-8">Error: {error}</div>;
 	}
 
 	if (!product) {

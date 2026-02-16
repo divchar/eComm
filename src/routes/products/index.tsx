@@ -14,18 +14,28 @@ export const Route = createFileRoute("/products/")({
 function ProductsPage() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const [quantities, setQuantities] = useState<Record<string, number>>({});
 	const { addToCart } = useCart();
 
 	useEffect(() => {
-		getProducts().then((data) => {
-			setProducts(data as Product[]);
-			setLoading(false);
-		})
+		getProducts()
+			.then((data) => {
+				setProducts(data as Product[]);
+				setLoading(false);
+			})
+			.catch((err) => {
+				setError(err.message || "Failed to load products");
+				setLoading(false);
+			});
 	}, []);
 
 	if (loading) {
 		return <div className="container mx-auto p-8">Loading...</div>;
+	}
+
+	if (error) {
+		return <div className="container mx-auto p-8">Error: {error}</div>;
 	}
 
 	const handleAddToCart = (product: Product) => {
