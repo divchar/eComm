@@ -61,7 +61,7 @@ function CheckoutPage() {
 		if (!formData.email.trim()) {
 			newErrors.email = "Email is required";
 			isValid = false;
-		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
 			newErrors.email = "Email is invalid";
 			isValid = false;
 		}
@@ -120,10 +120,12 @@ function CheckoutPage() {
 					</Card>
 				</div>
 
-				{/* Right side - Payment Information */}
+				{/* Right side - Customer & Shipping Information */}
 				<div>
 					<Card className="p-6">
-						<h2 className="text-2xl font-bold mb-6">Payment Information</h2>
+						<h2 className="text-2xl font-bold mb-6">
+							Customer & Shipping Information
+						</h2>
 						<form onSubmit={handleSubmit} className="space-y-4">
 							<div>
 								<label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -137,9 +139,12 @@ function CheckoutPage() {
 									onChange={handleInputChange}
 									className={errors.name ? "border-destructive" : ""}
 									aria-invalid={!!errors.name}
+									aria-describedby={errors.name ? "name-error" : undefined}
 								/>
 								{errors.name && (
-									<p className="text-destructive text-sm mt-1">{errors.name}</p>
+									<p id="name-error" className="text-destructive text-sm mt-1">
+										{errors.name}
+									</p>
 								)}
 							</div>
 
@@ -155,9 +160,12 @@ function CheckoutPage() {
 									onChange={handleInputChange}
 									className={errors.email ? "border-destructive" : ""}
 									aria-invalid={!!errors.email}
+									aria-describedby={errors.email ? "email-error" : undefined}
 								/>
 								{errors.email && (
-									<p className="text-destructive text-sm mt-1">{errors.email}</p>
+									<p id="email-error" className="text-destructive text-sm mt-1">
+										{errors.email}
+									</p>
 								)}
 							</div>
 
@@ -176,9 +184,10 @@ function CheckoutPage() {
 									onChange={handleInputChange}
 									className={errors.address ? "border-destructive" : ""}
 									aria-invalid={!!errors.address}
+									aria-describedby={errors.address ? "address-error" : undefined}
 								/>
 								{errors.address && (
-									<p className="text-destructive text-sm mt-1">
+									<p id="address-error" className="text-destructive text-sm mt-1">
 										{errors.address}
 									</p>
 								)}
