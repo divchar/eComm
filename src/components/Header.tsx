@@ -1,40 +1,143 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Home, Menu, X, ShoppingCart } from "lucide-react";
+import { Home, Menu, X, ShoppingCart, Search, LogOut, LogIn, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function Header() {
 	const [isOpen, setIsOpen] = useState(false);
 	const { cart } = useCart();
+	const { user, isAuthenticated, logout } = useAuth();
 	const itemCount = cart.items.reduce(
 		(total, item) => total + item.quantity,
 		0,
 	);
 
+	const handleLogout = async () => {
+		try {
+			await logout();
+		} catch (error) {
+			console.error("Logout failed:", error);
+		}
+	};
+
 	return (
 		<>
 			<header className="p-4 flex items-center justify-between bg-gray-800 text-white shadow-lg">
+				{/* Mobile: Hamburger Menu */}
 				<button
 					type="button"
 					onClick={() => setIsOpen(true)}
-					className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+					className="md:hidden p-2 hover:bg-gray-700 rounded-lg transition-colors"
 					aria-label="Open menu"
 				>
 					<Menu size={24} />
 				</button>
-				<h1 className="text-xl font-semibold flex-1 ml-4">
+
+				{/* Store Name/Logo */}
+				<h1 className="text-xl font-semibold md:mr-8">
 					<Link to="/">My Store</Link>
 				</h1>
-				<Link to="/cart">
-					<div className="relative p-2 hover:bg-gray-700 rounded-lg transition-colors">
-						<ShoppingCart size={24} />
-						{itemCount > 0 && (
-							<span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-								{itemCount}
-							</span>
+
+				{/* Desktop: Horizontal Navigation */}
+				<nav className="hidden md:flex items-center gap-6 flex-1">
+					<Link
+						to="/"
+						className="hover:text-cyan-400 transition-colors"
+						activeProps={{
+							className: "text-cyan-400",
+						}}
+					>
+						Home
+					</Link>
+					<Link
+						to="/products"
+						className="hover:text-cyan-400 transition-colors"
+						activeProps={{
+							className: "text-cyan-400",
+						}}
+					>
+						Products
+					</Link>
+					<Link
+						to="/about"
+						className="hover:text-cyan-400 transition-colors"
+						activeProps={{
+							className: "text-cyan-400",
+						}}
+					>
+						About
+					</Link>
+					<Link
+						to="/contact"
+						className="hover:text-cyan-400 transition-colors"
+						activeProps={{
+							className: "text-cyan-400",
+						}}
+					>
+						Contact
+					</Link>
+
+					{/* Desktop: Search Bar */}
+					<div className="flex-1 max-w-md mx-4">
+						<div className="relative">
+							<Search
+								className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+								size={18}
+							/>
+							<Input
+								type="search"
+								placeholder="Search products..."
+								className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+							/>
+						</div>
+					</div>
+				</nav>
+
+				{/* Desktop & Mobile: Right Side - Auth + Cart */}
+				<div className="flex items-center gap-3">
+					{/* Desktop: Auth Section */}
+					<div className="hidden md:flex items-center gap-3">
+						{isAuthenticated ? (
+							<>
+								<div className="flex items-center gap-2 text-sm">
+									<User size={18} />
+									<span>{user?.first_name || user?.email}</span>
+								</div>
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={handleLogout}
+									className="hover:bg-gray-700"
+								>
+									<LogOut size={18} className="mr-1" />
+									Logout
+								</Button>
+							</>
+						) : (
+							<Link to="/login">
+								<Button variant="ghost" size="sm" className="hover:bg-gray-700">
+									<LogIn size={18} className="mr-1" />
+									Login
+								</Button>
+							</Link>
 						)}
 					</div>
-				</Link>
+
+					{/* Cart Icon (Mobile & Desktop) */}
+					<Link to="/cart">
+						<div className="relative p-2 hover:bg-gray-700 rounded-lg transition-colors">
+							<ShoppingCart size={24} />
+							{itemCount > 0 && (
+								<span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+									{itemCount}
+								</span>
+							)}
+						</div>
+					</Link>
+				</div>
 			</header>
 
 			<aside
@@ -103,6 +206,38 @@ export function Header() {
 					>
 						<span className="font-medium">Contact</span>
 					</Link>
+
+					{/* Mobile: Auth Section */}
+					<div className="mt-6 pt-6 border-t border-gray-700">
+						{isAuthenticated ? (
+							<div className="space-y-3">
+								<div className="flex items-center gap-2 p-3 text-sm">
+									<User size={18} />
+									<span>{user?.first_name || user?.email}</span>
+								</div>
+								<button
+									type="button"
+									onClick={() => {
+										handleLogout();
+										setIsOpen(false);
+									}}
+									className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors text-left"
+								>
+									<LogOut size={20} />
+									<span className="font-medium">Logout</span>
+								</button>
+							</div>
+						) : (
+							<Link
+								to="/login"
+								onClick={() => setIsOpen(false)}
+								className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors"
+							>
+								<LogIn size={20} />
+								<span className="font-medium">Login</span>
+							</Link>
+						)}
+					</div>
 				</nav>
 			</aside>
 		</>
